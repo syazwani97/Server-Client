@@ -6,7 +6,7 @@ import java.io.*;
  *
  * @author www.codejava.net
  */
-public class TimeClient {
+public class TimeServer {
  
     public static void main(String[] args) {
         if (args.length < 2) return;
