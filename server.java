@@ -1,21 +1,37 @@
-import java.io.*;  
-import java.net.*;  
-public class MyServer
-{  
-public static void main(String[] args)
-{  
-try
-{  
-ServerSocket ss=new ServerSocket(6666);  
-Socket s=ss.accept();//establishes connection   
-DataInputStream dis=new DataInputStream(s.getInputStream());  
-String  str=(String)dis.readUTF();  
-System.out.println("message= "+str);  
-ss.close();  
+public class GreetServer 
+{
+    private ServerSocket serverSocket;
+    private Socket clientSocket;
+    private PrintWriter out;
+    private BufferedReader in;
+ 
+    public void start(int port) 
+    {
+        serverSocket = new ServerSocket(port);
+        clientSocket = serverSocket.accept();
+        out = new PrintWriter(clientSocket.getOutputStream(), true);
+        in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+        String greeting = in.readLine();
+            if ("hello server".equals(greeting)) 
+            {
+                out.println("hello client");
+            }
+            else 
+            {
+                out.println("unrecognised greeting");
+            }
+    }
+ 
+    public void stop() 
+    {
+        in.close();
+        out.close();
+        clientSocket.close();
+        serverSocket.close();
+    }
+    public static void main(String[] args)
+    {
+        GreetServer server=new GreetServer();
+        server.start(6666);
+    }
 }
-   catch(Exception e)
-   {
-      System.out.println(e);
-   }  
-  }  
-}  
