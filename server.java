@@ -1,72 +1,25 @@
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.io.Server;
- 
-public class Server
-{
- 
-    private static Socket socket;
- 
-    public static void main(String[] args)
-    {
-        try
-        {
- 
-            int port = 25000;
-            ServerSocket serverSocket = new ServerSocket(port);
-            System.out.println("Server Started and listening to the port 25000");
- 
-            //Server is running always. This is done using this while(true) loop
-            while(true)
-            {
-                //Reading the message from the client
-                socket = serverSocket.accept();
-                InputStream is = socket.getInputStream();
-                InputStreamReader isr = new InputStreamReader(is);
-                BufferedReader br = new BufferedReader(isr);
-                String number = br.readLine();
-                System.out.println("Message received from client is "+number);
- 
-                //Multiplying the number by 2 and forming the return message
-                String returnMessage;
-                try
-                {
-                    int numberInIntFormat = Integer.parseInt(number);
-                    int returnValue = numberInIntFormat*2;
-                    returnMessage = String.valueOf(returnValue) + "\n";
+import java.util.Date;
+
+/**
+ * A simple TCP server. When a client connects, it sends the client the current
+ * datetime, then closes the connection. This is arguably the simplest server
+ * you can write. Beware though that a client has to be completely served its
+ * date before the server will be able to handle another client.
+ */
+public class DateServer {
+    public static void main(String[] args) throws IOException {
+        try (var listener = new ServerSocket(59090)) {
+            System.out.println("The date server is running...");
+            while (true) {
+                try (var socket = listener.accept()) {
+                    var out = new PrintWriter(socket.getOutputStream(), true);
+                    out.println(new Date().toString());
                 }
-                catch(NumberFormatException e)
-                {
-                    //Input was not a number. Sending proper message back to client.
-                    returnMessage = "Please send a proper number\n";
-                }
- 
-                //Sending the response back to the client.
-                OutputStream os = socket.getOutputStream();
-                OutputStreamWriter osw = new OutputStreamWriter(os);
-                BufferedWriter bw = new BufferedWriter(osw);
-                bw.write(returnMessage);
-                System.out.println("Message sent to the client is "+returnMessage);
-                bw.flush();
             }
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-        finally
-        {
-            try
-            {
-                socket.close();
-            }
-            catch(Exception e){}
         }
     }
 }
