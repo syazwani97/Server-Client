@@ -42,7 +42,7 @@ public class Server
                     System.out.println(i); 
                 } 
             } 
-            System.out.println("Closing connection"); 
+            System.out.println("What's up!"); 
   
             // close connection 
             socket.close(); 
