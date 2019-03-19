@@ -6,6 +6,7 @@ import java.io.ObjectOutputStream;
 import java.lang.ClassNotFoundException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketServerExample;
 
 /**
  * This class implements java Socket server
