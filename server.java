@@ -1,62 +1,56 @@
-import java.io.*;
-import java.net.*;
-public class smtpClient {
-    public static void main(String[] args) {
-// declaration section:
-// smtpClient: our client socket
-// os: output stream
-// is: input stream
-        Socket smtpSocket = null;  
-        DataOutputStream os = null;
-        DataInputStream is = null;
-// Initialization section:
-// Try to open a socket on port 25
-// Try to open input and output streams
-        try {
-            smtpSocket = new Socket("hostname", 25);
-            os = new DataOutputStream(smtpSocket.getOutputStream());
-            is = new DataInputStream(smtpSocket.getInputStream());
-        } catch (UnknownHostException e) {
-            System.err.println("Don't know about host: hostname");
-        } catch (IOException e) {
-            System.err.println("Couldn't get I/O for the connection to: hostname");
-        }
-// If everything has been initialized then we want to write some data
-// to the socket we have opened a connection to on port 25
-    if (smtpSocket != null && os != null && is != null) {
-            try {
-// The capital string before each colon has a special meaning to SMTP
-// you may want to read the SMTP specification, RFC1822/3
-        os.writeBytes("HELO\n");    
-                os.writeBytes("MAIL From: k3is@fundy.csd.unbsj.ca\n");
-                os.writeBytes("RCPT To: k3is@fundy.csd.unbsj.ca\n");
-                os.writeBytes("DATA\n");
-                os.writeBytes("From: k3is@fundy.csd.unbsj.ca\n");
-                os.writeBytes("Subject: testing\n");
-                os.writeBytes("Hi there\n"); // message body
-                os.writeBytes("\n.\n");
-        os.writeBytes("QUIT");
-// keep on reading from/to the socket till we receive the "Ok" from SMTP,
-// once we received that then we want to break.
-                String responseLine;
-                while ((responseLine = is.readLine()) != null) {
-                    System.out.println("Server: " + responseLine);
-                    if (responseLine.indexOf("Ok") != -1) {
-                      break;
-                    }
-                }
-// clean up:
-// close the output stream
-// close the input stream
-// close the socket
-        os.close();
-                is.close();
-                smtpSocket.close();   
-            } catch (UnknownHostException e) {
-                System.err.println("Trying to connect to unknown host: " + e);
-            } catch (IOException e) {
-                System.err.println("IOException:  " + e);
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.Scanner;
+import java.util.concurrent.Executors;
+
+/**
+ * A server program which accepts requests from clients to capitalize strings. When
+ * a client connects, a new thread is started to handle it. Receiving client data,
+ * capitalizing it, and sending the response back is all done on the thread, allowing
+ * much greater throughput because more clients can be handled concurrently.
+ */
+public class CapitalizeServer {
+
+    /**
+     * Runs the server. When a client connects, the server spawns a new thread to do
+     * the servicing and immediately returns to listening. The application limits the
+     * number of threads via a thread pool (otherwise millions of clients could cause
+     * the server to run out of resources by allocating too many threads).
+     */
+    public static void main(String[] args) throws Exception {
+        try (var listener = new ServerSocket(59898)) {
+            System.out.println("The capitalization server is running...");
+            var pool = Executors.newFixedThreadPool(20);
+            while (true) {
+                pool.execute(new Capitalizer(listener.accept()));
             }
         }
-    }           
+    }
+
+    private static class Capitalizer implements Runnable {
+        private Socket socket;
+
+        Capitalizer(Socket socket) {
+            this.socket = socket;
+        }
+
+        @Override
+        public void run() {
+            System.out.println("Connected: " + socket);
+            try {
+                var in = new Scanner(socket.getInputStream());
+                var out = new PrintWriter(socket.getOutputStream(), true);
+                while (in.hasNextLine()) {
+                    out.println(in.nextLine().toUpperCase());
+                }
+            } catch (Exception e) {
+                System.out.println("Error:" + socket);
+            } finally {
+                try { socket.close(); } catch (IOException e) {}
+                System.out.println("Closed: " + socket);
+            }
+        }
+    }
 }
