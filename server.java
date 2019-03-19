@@ -1,56 +1,36 @@
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.Scanner;
-import java.util.concurrent.Executors;
-
+import java.net.*;
+import java.io.*;
+ 
 /**
- * A server program which accepts requests from clients to capitalize strings. When
- * a client connects, a new thread is started to handle it. Receiving client data,
- * capitalizing it, and sending the response back is all done on the thread, allowing
- * much greater throughput because more clients can be handled concurrently.
+ * This program demonstrates a simple TCP/IP socket client.
+ *
+ * @author www.codejava.net
  */
-public class CapitalizeServer {
-
-    /**
-     * Runs the server. When a client connects, the server spawns a new thread to do
-     * the servicing and immediately returns to listening. The application limits the
-     * number of threads via a thread pool (otherwise millions of clients could cause
-     * the server to run out of resources by allocating too many threads).
-     */
-    public static void main(String[] args) throws Exception {
-        try (var listener = new ServerSocket(59898)) {
-            System.out.println("The capitalization server is running...");
-            var pool = Executors.newFixedThreadPool(20);
-            while (true) {
-                pool.execute(new Capitalizer(listener.accept()));
-            }
-        }
-    }
-
-    private static class Capitalizer implements Runnable {
-        private Socket socket;
-
-        Capitalizer(Socket socket) {
-            this.socket = socket;
-        }
-
-        @Override
-        public void run() {
-            System.out.println("Connected: " + socket);
-            try {
-                var in = new Scanner(socket.getInputStream());
-                var out = new PrintWriter(socket.getOutputStream(), true);
-                while (in.hasNextLine()) {
-                    out.println(in.nextLine().toUpperCase());
-                }
-            } catch (Exception e) {
-                System.out.println("Error:" + socket);
-            } finally {
-                try { socket.close(); } catch (IOException e) {}
-                System.out.println("Closed: " + socket);
-            }
+public class TimeClient {
+ 
+    public static void main(String[] args) {
+        if (args.length < 2) return;
+ 
+        String hostname = args[0];
+        int port = Integer.parseInt(args[1]);
+ 
+        try (Socket socket = new Socket(hostname, port)) {
+ 
+            InputStream input = socket.getInputStream();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+ 
+            String time = reader.readLine();
+ 
+            System.out.println(time);
+ 
+ 
+        } catch (UnknownHostException ex) {
+ 
+            System.out.println("Server not found: " + ex.getMessage());
+ 
+        } catch (IOException ex) {
+ 
+            System.out.println("I/O error: " + ex.getMessage());
         }
     }
 }
