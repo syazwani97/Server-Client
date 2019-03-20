@@ -14,7 +14,7 @@ public class Server
         // starts server and waits for a connection 
         try
         { 
-            server = new ServerSocket(port); 
+            server = new ServerSocket(5000); 
             System.out.println("Server started"); 
   
             System.out.println("Waiting for a client ..."); 
