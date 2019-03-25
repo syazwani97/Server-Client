@@ -21,6 +21,7 @@ public class Server
   
             socket = server.accept(); 
             System.out.println("Client accepted"); 
+            System.out.println("Hello");
   
             // takes input from the client socket 
             in = new DataInputStream( 
