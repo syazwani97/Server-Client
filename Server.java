@@ -18,11 +18,11 @@ public class Server
             System.out.println("Server started"); 
   
             System.out.println("Waiting for a client ..."); 
-  
-            socket = server.accept(); 
             System.out.println("Client accepted"); 
             System.out.println("Hello");
   
+            socket = server.accept(); 
+            
             // takes input from the client socket 
             in = new DataInputStream( 
                 new BufferedInputStream(socket.getInputStream())); 
