@@ -44,7 +44,7 @@ exit(1);
 
         serverAdd.sin_family = AF_INET;    
 
-        serverAdd.sin_port = htons(5000);  
+        serverAdd.sin_port = htons(3000);  
 
         serverAdd.sin_addr = *((struct in_addr *)host->h_addr);
 
