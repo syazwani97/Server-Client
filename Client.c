@@ -6,7 +6,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
-#define PORT 4444
+#define PORT 3000
 
 void main(){
 	
