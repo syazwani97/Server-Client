@@ -1,45 +1,51 @@
-// Write CPP code here 
-#include <netdb.h> 
-#include <stdio.h> 
-#include <unistd.h>
-#include <stdlib.h> 
-#include <string.h> 
-#include <sys/socket.h> 
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
 #include <arpa/inet.h>
-#define PORT 5000 
-
-int main(int argc , char const *argv[])
+#include <unistd.h>
+#include<string.h>
+int main()
 {
-     int sockfd = 0, vread;
-     char *hello = "hello from client";
-     char buff[1000] = {0};
-     struct sockaddr_in adrress;
-     struct sockaddr_in serv_addr;
-     
-     //create socket
-     if ((sockfd = socket(AF_INET, SOCK_STREAM,0)) < 0)
-     {
-          printf ("could not create socket");
-	  return -1;
+     printf("this is a client program\n");
+     struct sockaddr_in myaddr,clientaddr;
+     int newsockid;
+     int len;
+     int sockid,client_add;
+     sockid=socket(AF_INET,SOCK_STREAM,0);
+     if(sockid==-1)
+     perror("socket");
+     memset(&myaddr,0,sizeof myaddr);
+     myaddr.sin_port=htons(4444);
+     myaddr.sin_family=AF_INET;
+     myaddr.sin_addr.s_addr=inet_addr("127.0.0.1");
+     len=sizeof myaddr;
+      if((bind(sockid,(struct sockaddr*)&myaddr,sizeof myaddr))==-1)
+    perror("bind");
+     int p=connect(sockid,(struct sockaddr*)&myaddr,len);
+     if(p==-1)
+     perror("connect");
+     char msg[200];
+     int i=0;
+     char c;int l=0; char *buffer=(char *)(malloc(sizeof(char)*200)); int buffsize;
+     while(i<10)
+     {l=0;
+                printf("Client: ");
+                while((c=getchar())!='\n')
+                {
+            msg[l++]=c;
+                }
+                msg[l]='\0'; l++;
+                send(sockid,msg,l,0);
+                fflush(stdin);
+                newsockid=accept(sockid,(struct sockaddr*)&clientaddr,&client_add);
+                recv(newsockid,buffer,buffsize,0);
+                   l=0;
+                 fprintf(stdout, "server: %s", buffer);
+                  printf("\n");
+                i++;
      }
-     memset(&serv_addr, '0', sizeof(serv_addr));
-     
-     serv_addr.sin_family = AF_INET;
-     serv_addr.sin_port = htons(5000);
-     
-     if (inet_pton(AF_INET, "192.168.184.131", &serv_addr.sin_addr) <= 0)
-     {
-          //print the error message
-          printf("\n it's error \n");
-          return -1;
-     }
-	
-	//Accept and incoming connection
-	send(sockfd, hello, strlen(hello) , 0);
-	  printf("hello message sent");
-	  vread = read(sockfd, buff , 1000);
-	  printf("%s\n" , buff);
-	  
-	
-	return 0;
+     close(sockid);
+     return 0;
 }
