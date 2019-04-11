@@ -1,7 +1,8 @@
 import java.io.*;
 import java.net.*;
 import java.lang.*;
-public class Server {
+public class Server 
+{
         
 	public static void main(String[] args) throws IOException {
 		final int port = 4444;
