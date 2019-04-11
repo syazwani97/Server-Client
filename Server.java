@@ -1,44 +1,59 @@
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.lang.ClassNotFoundException;
-import java.net.ServerSocket;
-import java.net.Socket;
-
-public class Server {
-    
-    //static ServerSocket variable
-    private static ServerSocket server;
-    //socket server port on which it will listen
-    private static int port = 4444;
-    
-    public static void main(String args[]) throws IOException, ClassNotFoundException{
-        //create the socket server object
-        server = new ServerSocket(port);
-        //keep listens indefinitely until receives 'exit' call or program terminates
-        while(true){
-            System.out.println("Waiting for the client request");
-            //creating socket and waiting for client connection
-            Socket socket = server.accept();
-            //read from socket to ObjectInputStream object
-            ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
-            //convert ObjectInputStream object to String
-            String message = (String) ois.readObject();
-            System.out.println("Message Received: " + message);
-            //create ObjectOutputStream object
-            ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-            //write object to Socket
-            oos.writeObject("Hi Client "+message);
-            //close resources
-            ois.close();
-            oos.close();
-            socket.close();
-            //terminate the server if client sends exit request
-            if(message.equalsIgnoreCase("exit")) break;
-        }
-        System.out.println("Shutting down Socket server!!");
-        //close the ServerSocket object
-        server.close();
+import java.net.*;
+import java.io.*;
+import java.lang.*;
+import java.util.*;
+public class Server
+{
+    public static void main (String[] args)
+    {
+      try
+      {      
+      ServerSocket srvr = new ServerSocket(3000);
+      Socket skt = srvr.accept();
+      
+      InputStreamReader bf = new InputStreamReader(skt.getInputStream());
+      BufferedReader in= new BufferedReader(bf);
+      PrintWriter out = new PrintWriter(skt.getOutputStream(),true);
+      Scanner s=new Scanner(System.in);
+      
+      Thread send=new Thread(new Runnable(){
+      String msg;
+          
+      public void run(){
+            while(true){
+  
+                  msg=s.nextLine();
+                  out.print(msg);
+                  out.flush();
+            }
+      }
+      });
+      send.start();
+      
+      Thread receive=new Thread(new Runnable(){
+      String msg;
+      
+      public void run(){
+            while(true){
+                  try{
+                        msg=in.readLine();
+                  }catch(IOException e){
+                        e.printStackTrace();
+                  }
+                  System.out.print("Client: "+msg);
+            }
+      }
+      });
+      receive.start();
+            
+      
+      
+      //closing connection
+      //out.close();
+      //skt.close();
+      //srvr.close();
+      }catch (IOException e){
+            e.printStackTrace();
+      }
     }
-    
 }
