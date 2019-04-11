@@ -19,7 +19,7 @@ int main()
      memset(&myaddr,0,sizeof myaddr);
      myaddr.sin_port=htons(4444);
      myaddr.sin_family=AF_INET;
-     myaddr.sin_addr.s_addr=inet_addr("192.168.184.131");
+     myaddr.sin_addr.s_addr=inet_addr("127.0.0.1");
      len=sizeof myaddr;
       if((bind(sockid,(struct sockaddr*)&myaddr,sizeof myaddr))==-1)
     perror("bind");
