@@ -1,6 +1,3 @@
-
-package com.journaldev.socket;
-
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -8,10 +5,6 @@ import java.lang.ClassNotFoundException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-/**
- * This class implements java Socket server
- *
- */
 public class Server {
     
     //static ServerSocket variable
