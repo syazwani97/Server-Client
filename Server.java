@@ -1,7 +1,8 @@
 import java.io.*;
 import java.net.*;
 import java.lang.*;
-public class Server {
+public class Server 
+{
 	public static void main(String[] args) throws IOException {
 		final int port = 4444;
 		System.out.println("Server waiting for connection on port "+port);
@@ -15,7 +16,8 @@ public class Server {
 		SendToClientThread send = new SendToClientThread(clientSocket);
 		Thread thread2 = new Thread(send);
 		thread2.start();
-	}}
+	}
+}
 class RecieveFromClientThread implements Runnable
 {
 	Socket clientSocket=null;
