@@ -1,8 +1,8 @@
 import java.io.*;
 import java.net.*;
 import java.lang.*;
-public class MyServer 
-{
+public class Server {
+        
 	public static void main(String[] args) throws IOException {
 		final int port = 4444;
 		System.out.println("Server waiting for connection on port "+port);
@@ -16,8 +16,7 @@ public class MyServer
 		SendToClientThread send = new SendToClientThread(clientSocket);
 		Thread thread2 = new Thread(send);
 		thread2.start();
-	}
-}
+	}}
 class RecieveFromClientThread implements Runnable
 {
 	Socket clientSocket=null;
@@ -39,7 +38,7 @@ class RecieveFromClientThread implements Runnable
 				break;//break to close socket if EXIT
 			}
 			System.out.println("From Client: " + messageString);//print the message from client
-			System.out.println("Please enter something to send back to client..");
+			System.out.println("Server: ");
 		}
 		this.clientSocket.close();
 		System.exit(0);
@@ -71,7 +70,7 @@ class SendToClientThread implements Runnable
 			
 			pwPrintWriter.println(msgToClientString);//send message to client with PrintWriter
 			pwPrintWriter.flush();//flush the PrintWriter
-			System.out.println("Please enter something to send back to client..");
+			System.out.println("server: ");
 		}//end while
 		}
 		catch(Exception ex){System.out.println(ex.getMessage());}	
