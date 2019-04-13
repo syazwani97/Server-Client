@@ -4,8 +4,8 @@ class Server
 {
   public static void main(String[] args) throws Exception
   {
-      ServerSocket sersock = new ServerSocket(5678);
-      System.out.println("Welcome to AINA'S profile! ");
+      ServerSocket sersock = new ServerSocket(3000);
+      System.out.println("This is a server program\n");
       Socket sock = sersock.accept( );                          
                              
       BufferedReader keyRead = new BufferedReader(new InputStreamReader(System.in));
