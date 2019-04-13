@@ -6,6 +6,7 @@ class Server
   {
       ServerSocket sersock = new ServerSocket(3000);
       System.out.println("This is a server program\n");
+      printf("Client: ");
       Socket sock = sersock.accept( );                          
                              
       BufferedReader keyRead = new BufferedReader(new InputStreamReader(System.in));
