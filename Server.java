@@ -1,14 +1,14 @@
-import java.net.*;
-   import java.io.*;
-    import java.util.*;
+ import java.net.*;
+ import java.io.*;
+ import java.util.*;
  
-    public class Server {
+   public class Server {
  
       public static void main( String[] args ) {
  
-        int port = 13;
-       String line;
-       ServerSocket servsock;
+        int port = 3000;
+      String line;
+      ServerSocket servsock;
        Socket clisock;
        PrintWriter output;
 
@@ -36,9 +36,9 @@ import java.net.*;
              // Write the time out to the socket
              output.println( curtime );
 
-             // Try to close the socket0             
-              try {
-              clisock.close();
+             // Try to close the socket
+             try {
+               clisock.close();
              }
              catch( IOException e ) {
                System.out.println( e );
