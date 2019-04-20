@@ -6,6 +6,7 @@
 #include<string.h>
 #include<stdlib.h>
 #include <unistd.h>
+#include <arpa/inet.h>
 #define MAX 80
 #define PORT 3000
 #define SA struct sockaddr
