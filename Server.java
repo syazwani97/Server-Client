@@ -36,7 +36,8 @@ import java.net.*;
              // Write the time out to the socket
              output.println( curtime );
 
-             // Try to close the socket0             try {
+             // Try to close the socket0             
+              try {
               clisock.close();
              }
              catch( IOException e ) {
