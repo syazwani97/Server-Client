@@ -18,7 +18,7 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
-public class EmailUtil {
+public class SMTPServer {
 
 	/**
 	 * Utility method to send simple HTML email
