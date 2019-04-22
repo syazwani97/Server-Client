@@ -1,59 +1,84 @@
+import java.util.*;
+import java.io.*;
+import java.nio.file.*;
+import javax.mail.*;
+import javax.mail.internet.*;
 
-package com.journaldev.mail;
+/**
+* Simple demonstration of using the javax.mail API.
+*
+* Run from the command line. Please edit the implementation
+* to use correct email addresses and host name.
+*/
+public final class Emailer {
 
-import java.io.UnsupportedEncodingException;
-import java.util.Date;
+  public static void main( String... aArguments ){
+    Emailer emailer = new Emailer();
+    //the domains of these email addresses should be valid,
+    //or the example will fail:
+    emailer.sendEmail(
+      "fromblah@blah.com", "toblah@blah.com",
+       "Testing 1-2-3", "blah blah blah"
+    );
+   }
 
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
-import javax.activation.FileDataSource;
-import javax.mail.BodyPart;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Multipart;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
+  /**
+  * Send a single email.
+  */
+  public void sendEmail(
+    String aFromEmailAddr, String aToEmailAddr,
+    String aSubject, String aBody
+  ){
+    //Here, no Authenticator argument is used (it is null).
+    //Authenticators are used to prompt the user for user
+    //name and password.
+    Session session = Session.getDefaultInstance(fMailServerConfig, null);
+    MimeMessage message = new MimeMessage(session);
+    try {
+      //the "from" address may be set in code, or set in the
+      //config file under "mail.from" ; here, the latter style is used
+      //message.setFrom(new InternetAddress(aFromEmailAddr));
+      message.addRecipient(
+        Message.RecipientType.TO, new InternetAddress(aToEmailAddr)
+      );
+      message.setSubject(aSubject);
+      message.setText(aBody);
+      Transport.send(message);
+    }
+    catch (MessagingException ex){
+      System.err.println("Cannot send email. " + ex);
+    }
+  }
 
-public class SMTPServer {
+  /**
+  * Allows the config to be refreshed at runtime, instead of
+  * requiring a restart.
+  */
+  public static void refreshConfig() {
+    fMailServerConfig.clear();
+    fetchConfig();
+  }
 
-	/**
-	 * Utility method to send simple HTML email
-	 * @param session
-	 * @param toEmail
-	 * @param subject
-	 * @param body
-	 */
-	public static void sendEmail(Session session, String toEmail, String subject, String body){
-		try
-	    {
-	      MimeMessage msg = new MimeMessage(session);
-	      //set message headers
-	      msg.addHeader("Content-type", "text/HTML; charset=UTF-8");
-	      msg.addHeader("format", "flowed");
-	      msg.addHeader("Content-Transfer-Encoding", "8bit");
+  // PRIVATE 
 
-	      msg.setFrom(new InternetAddress("no_reply@example.com", "NoReply-JD"));
+  private static Properties fMailServerConfig = new Properties();
 
-	      msg.setReplyTo(InternetAddress.parse("no_reply@example.com", false));
+  static {
+    fetchConfig();
+  }
 
-	      msg.setSubject(subject, "UTF-8");
-
-	      msg.setText(body, "UTF-8");
-
-	      msg.setSentDate(new Date());
-
-	      msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail, false));
-	      System.out.println("Message is ready");
-    	  Transport.send(msg);  
-
-	      System.out.println("EMail Sent Successfully!!");
-	    }
-	    catch (Exception e) {
-	      e.printStackTrace();
-	    }
-	}
-}
+  /**
+  * Open a specific text file containing mail server
+  * parameters, and populate a corresponding Properties object.
+  */
+  private static void fetchConfig() {
+    //This file contains the javax.mail config properties mentioned above.
+    Path path = Paths.get("C:\\Temp\\MyMailServer.txt");
+    try (InputStream input = Files.newInputStream(path)) {
+      fMailServerConfig.load(input);
+    }
+    catch (IOException ex){
+      System.err.println("Cannot open and load mail server properties file.");
+    }
+  }
+} 
