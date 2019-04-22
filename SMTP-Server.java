@@ -10,7 +10,7 @@ import javax.mail.internet.*;
 * Run from the command line. Please edit the implementation
 * to use correct email addresses and host name.
 */
-public final class Emailer {
+public class SMTP {
 
   public static void main( String... aArguments ){
     Emailer emailer = new Emailer();
