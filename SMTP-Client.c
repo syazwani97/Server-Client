@@ -16,7 +16,7 @@ char fname[256],passk[10],logink[10];
 struct log
 {
 char login[10];
-char pass[10]
+char pass[10];
 }logs[10];
 int opt,i=0;
 struct sockaddr_in address;
